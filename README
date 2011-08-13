@@ -1,0 +1,48 @@
+NAME
+    Mojolicious::Plugin::UrlWith - Preserve parts of the url
+
+VERSION
+    0.01
+
+DESCRIPTION
+    This helper provides the same method as "url_for" in
+    Mojolicious::Controller with the difference that it keeps the query
+    string.
+
+SYNOPSIS
+        package MyApp;
+        sub startup {
+            my $self = shift;
+            $self->plugin('Mojolicious::Plugin::UrlWith');
+            # ...
+        }
+
+HELPERS
+  url_with
+    The examples below has this current request url:
+    "http://somedomain.com/search?page=1".
+
+    $new_url = $controller->url_with({ name => 'bob' });
+        Will result in "http://somedomain.com/search?page=1&name=bob".
+
+    $new_url = $controller->url_with({ page => undef });
+        Will result in "http://somedomain.com/search".
+
+    $new_url = $controller->url_with('named', { age => 42 });
+        Will result in
+        "http://somedomain.com/some/named/route?page=1&age=42".
+
+    $new_url = $controller->url_with('/path', { random => 24 });
+        Will result in "http://somedomain.com/path?page=1&random=24".
+
+METHODS
+  register
+    Will register the methods under "HELPERS".
+
+COPYRIGHT & LICENSE
+    This library is free software. You can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
+AUTHOR
+    Jan Henning Thorsen
+
