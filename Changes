@@ -1,5 +1,8 @@
 Revision history for Mojolicious-Plugin-UrlWith
 
+0.03
+       * url_with() allows fragments to be part location
+
 0.02     Sun Aug 14 09:16:51 CEST 2011
        * Forgot to add dependencies to Makefile.PL
 
