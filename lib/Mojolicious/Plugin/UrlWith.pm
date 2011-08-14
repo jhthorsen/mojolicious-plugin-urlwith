@@ -28,7 +28,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::Util qw/ xml_escape /;
 use Mojolicious::Plugin::TagHelpers;
 
-our $VERSION = '0.01';
+our $VERSION = eval '0.01';
 
 =head1 HELPERS
 
