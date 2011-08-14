@@ -57,7 +57,8 @@ Will result in C<http://somedomain.com/path?page=1&random=24>.
 
 =cut
 
-sub __url_with {
+sub url_with {
+    my $self = shift;
     my $controller = shift;
     my $args = ref $_[-1] eq 'HASH' ? pop : {};
     my $url = @_ ? $controller->url_for(@_) : $controller->req->url->clone;
@@ -66,11 +67,11 @@ sub __url_with {
     $url->query($query);
 
     for my $key (keys %$args) {
-        if(not defined $args->{$key}) {
-            $query->remove($key);
+        if(defined $args->{$key}) {
+            $query->append($key => $args->{$key});
         }
         else {
-            $query->append($key => $args->{$key});
+            $query->remove($key);
         }
     }
 
@@ -88,7 +89,9 @@ Will register the methods under L</HELPERS>.
 sub register {
     my($self, $app, $config) = @_;
 
-    $app->helper(url_with => \&__url_with);
+    $config->{'url_with_alias'} ||= 'url_with';
+
+    $app->helper($config->{'url_with_alias'} => sub { $self->url_with(@_) });
 }
 
 =head1 COPYRIGHT & LICENSE
