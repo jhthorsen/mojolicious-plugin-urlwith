@@ -1,5 +1,8 @@
 Revision history for Mojolicious-Plugin-UrlWith
 
+0.02     Sun Aug 14 09:16:51 CEST 2011
+       * Forgot to add dependencies to Makefile.PL
+
 0.01     Sun Aug 14 09:11:00 CEST 2011
        * Add url_with()
        * Add link_with()

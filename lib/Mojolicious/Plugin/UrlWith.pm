@@ -6,7 +6,7 @@ Mojolicious::Plugin::UrlWith - Preserve parts of the url
 
 =head1 VERSION
 
-0.01
+0.02
 
 =head1 DESCRIPTION
 
@@ -28,7 +28,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::Util qw/ xml_escape /;
 use Mojolicious::Plugin::TagHelpers;
 
-our $VERSION = eval '0.01';
+our $VERSION = eval '0.02';
 
 =head1 HELPERS
 

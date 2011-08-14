@@ -2,7 +2,7 @@ NAME
     Mojolicious::Plugin::UrlWith - Preserve parts of the url
 
 VERSION
-    0.01
+    0.02
 
 DESCRIPTION
     This helper provides the same method as "url_for" in
