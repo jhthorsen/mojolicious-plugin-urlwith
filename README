@@ -22,18 +22,23 @@ HELPERS
     The examples below has this current request url:
     "http://somedomain.com/search?page=1".
 
-    $new_url = $controller->url_with({ name => 'bob' });
+    $controller->url_with({ name => 'bob' });
         Will result in "http://somedomain.com/search?page=1&name=bob".
 
-    $new_url = $controller->url_with({ page => undef });
+    $controller->url_with({ page => undef });
         Will result in "http://somedomain.com/search".
 
-    $new_url = $controller->url_with('named', { age => 42 });
+    $controller->url_with('named', { age => 42 });
         Will result in
         "http://somedomain.com/some/named/route?page=1&age=42".
 
-    $new_url = $controller->url_with('/path', { random => 24 });
+    $controller->url_with('/path', { random => 24 });
         Will result in "http://somedomain.com/path?page=1&random=24".
+
+  link_with
+    Same as "link_to" in Mojolicious::Plugin::TagHelpers, but use "url_with"
+    instead of "url_to" in Mojolicious::Controller to construct the hyper
+    reference.
 
 METHODS
   register

@@ -25,6 +25,8 @@ with the difference that it keeps the query string.
 =cut
 
 use Mojo::Base 'Mojolicious::Plugin';
+use Mojo::Util qw/ xml_escape /;
+use Mojolicious::Plugin::TagHelpers;
 
 our $VERSION = '0.01';
 
@@ -37,19 +39,19 @@ C<http://somedomain.com/search?page=1>.
 
 =over 4
 
-=item $new_url = $controller->url_with({ name => 'bob' });
+=item $controller->url_with({ name => 'bob' });
 
 Will result in C<http://somedomain.com/search?page=1&name=bob>.
 
-=item $new_url = $controller->url_with({ page => undef });
+=item $controller->url_with({ page => undef });
 
 Will result in C<http://somedomain.com/search>.
 
-=item $new_url = $controller->url_with('named', { age => 42 });
+=item $controller->url_with('named', { age => 42 });
 
 Will result in C<http://somedomain.com/some/named/route?page=1&age=42>.
 
-=item $new_url = $controller->url_with('/path', { random => 24 });
+=item $controller->url_with('/path', { random => 24 });
 
 Will result in C<http://somedomain.com/path?page=1&random=24>.
 
@@ -78,6 +80,40 @@ sub url_with {
     return $url;
 }
 
+=head2 link_with
+
+Same as L<Mojolicious::Plugin::TagHelpers/link_to>, but use L</url_with>
+instead of L<Mojolicious::Controller/url_to> to construct the hyper
+reference.
+
+=cut
+
+sub link_with {
+    my $self = shift;
+    my $controller = shift;
+    my(@url_args, @tag_args);
+
+    # Pretty much copy/paste from Plugin::TagHelpers
+    unless(defined $_[-1] and ref $_[-1] eq 'CODE') {
+        my $content = shift;
+        xml_escape $content;
+        push @tag_args, sub { $content };
+    }
+
+    for my $i (reverse 0..@_-1) {
+        if(ref $_[$i] eq 'HASH') {
+            push @url_args, @_[0..$i];
+            unshift @tag_args, @_[$i+1..@_-1];
+            last;
+        }
+    }
+
+    return Mojolicious::Plugin::TagHelpers->_tag(
+        a => href => $self->url_with($controller, @url_args),
+        @tag_args,
+    );
+}
+
 =head1 METHODS
 
 =head2 register
@@ -90,8 +126,10 @@ sub register {
     my($self, $app, $config) = @_;
 
     $config->{'url_with_alias'} ||= 'url_with';
+    $config->{'link_with_alias'} ||= 'link_with';
 
     $app->helper($config->{'url_with_alias'} => sub { $self->url_with(@_) });
+    $app->helper($config->{'link_with_alias'} => sub { $self->link_with(@_) });
 }
 
 =head1 COPYRIGHT & LICENSE
