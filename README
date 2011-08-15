@@ -17,6 +17,11 @@ SYNOPSIS
             # ...
         }
 
+ATTRIBUTES
+  parse_fragment
+    Will remove the '#fragment' part from the first arugment to "url_with",
+    and use it use it for "fragment" in Mojo::URL.
+
 HELPERS
   url_with
     The examples below has this current request url:
@@ -34,6 +39,12 @@ HELPERS
 
     $controller->url_with('/path', { random => 24 });
         Will result in "http://somedomain.com/path?page=1&random=24".
+
+    $controller->url_with('/path', [ c => 313 ]);
+        Will result in "http://somedomain.com/path?c=313".
+
+    Summary: A hash-ref will be merged with existing query params, while an
+    array-ref will create a new set of query params.
 
   link_with
     Same as "link_to" in Mojolicious::Plugin::TagHelpers, but use "url_with"

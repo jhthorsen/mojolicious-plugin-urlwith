@@ -2,6 +2,8 @@ Revision history for Mojolicious-Plugin-UrlWith
 
 0.03
        * url_with() allows fragments to be part location
+       * url_with() can be called with an array-ref, which will replace the
+         existing query params.
 
 0.02     Sun Aug 14 09:16:51 CEST 2011
        * Forgot to add dependencies to Makefile.PL

@@ -66,14 +66,21 @@ Will result in C<http://somedomain.com/some/named/route?page=1&age=42>.
 
 Will result in C<http://somedomain.com/path?page=1&random=24>.
 
+=item $controller->url_with('/path', [ c => 313 ]);
+
+Will result in C<http://somedomain.com/path?c=313>.
+
 =back
+
+Summary: A hash-ref will be merged with existing query params, while
+an array-ref will create a new set of query params.
 
 =cut
 
 sub url_with {
     my $self = shift;
     my $controller = shift;
-    my $args = ref $_[-1] eq 'HASH' ? pop : {};
+    my $args = ref($_[-1]) =~ /^(?:HASH|ARRAY)$/ ? pop : undef;
     my @args = @_;
     my $query = $controller->req->url->query->clone;
     my $url;
@@ -89,16 +96,21 @@ sub url_with {
         $url = @args ? $controller->url_for(@args) : $controller->req->url->clone;
     }
 
-    $url->query($query);
-
-    for my $key (keys %$args) {
-        if(defined $args->{$key}) {
-            $query->append($key => $args->{$key});
-        }
-        else {
-            $query->remove($key);
+    if(ref $args eq 'HASH') { # merge
+        for my $key (keys %$args) {
+            if(defined $args->{$key}) {
+                $query->append($key => $args->{$key});
+            }
+            else {
+                $query->remove($key);
+            }
         }
     }
+    elsif(ref $args eq 'ARRAY') { # replace
+        $query = Mojo::Parameters->new(@$args);
+    }
+
+    $url->query($query);
 
     return $url;
 }
@@ -124,7 +136,7 @@ sub link_with {
     }
 
     for my $i (reverse 0..@_-1) {
-        if(ref $_[$i] eq 'HASH') {
+        if(ref($_[$i]) =~ /^(?:HASH|ARRAY)/) {
             push @url_args, @_[0..$i];
             unshift @tag_args, @_[$i+1..@_-1];
             last;

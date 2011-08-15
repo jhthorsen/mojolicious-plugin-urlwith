@@ -7,7 +7,7 @@ use Mojolicious::Lite;
 
 my $t = Test::Mojo->new;
 
-plan tests => 22;
+plan tests => 26;
 plugin 'url_with';
 
 get '/echo1' => sub { $_[0]->render(text => $_[0]->url_with({})->to_string) };
@@ -16,6 +16,8 @@ get '/search-add' => sub { $_[0]->render(text => $_[0]->url_with({ name => 'Bob'
 get '/search-undef' => sub { $_[0]->render(text => $_[0]->url_with({ page => undef })->to_string) };
 get '/name' => sub { $_[0]->render(text => $_[0]->url_with(somenamedroute => { age => 42 })->to_string) };
 get '/path' => sub { $_[0]->render(text => $_[0]->url_with('/path' => { random => 24 })->to_string) };
+get '/array-empty' => sub { $_[0]->render(text => $_[0]->url_with([])->to_string) };
+get '/array-new' => sub { $_[0]->render(text => $_[0]->url_with('/some-location', [ c => 123 ])->to_string) };
 get '/some/named/route' => sub {};
 get '/cap/:a' => sub {};
 
@@ -31,6 +33,8 @@ $t->get_ok('/search-add?page=1')->content_is('/search-add?page=1&name=Bob');
 $t->get_ok('/search-undef?page=1')->content_is('/search-undef');
 $t->get_ok('/name?page=1')->content_is('/some/named/route?page=1&age=42');
 $t->get_ok('/path?page=1')->content_is('/path?page=1&random=24');
+$t->get_ok('/array-empty?page=1')->content_is('/array-empty');
+$t->get_ok('/array-new?page=1')->content_is('/some-location?c=123');
 
 $t->get_ok('/link-with?page=1')->content_is('<a href="/link-with?page=1">Link text</a>');
 $t->get_ok('/link-with-simple?page=1')->content_is('<a href="/link-with-simple?page=1&amp;name=Bob">Bob</a>');
