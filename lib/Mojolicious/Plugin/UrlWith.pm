@@ -24,7 +24,7 @@ with the difference that it keeps the query string.
 
 =cut
 
-use Mojo::Base -base => 'Mojolicious::Plugin';
+use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::Util qw/ xml_escape /;
 use Mojolicious::Plugin::TagHelpers;
 
@@ -39,7 +39,7 @@ and use it use it for L<Mojo::URL/fragment>.
 
 =cut
 
-has parse_fragment => sub { 0 };
+__PACKAGE__->attr(parse_fragment => sub { 0 });
 
 =head1 HELPERS
 
