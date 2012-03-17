@@ -6,7 +6,7 @@ Mojolicious::Plugin::UrlWith - Preserve parts of the url
 
 =head1 VERSION
 
-0.04
+0.05
 
 =head1 DESCRIPTION
 
@@ -18,7 +18,12 @@ with the difference that it keeps the query string.
     package MyApp;
     sub startup {
         my $self = shift;
-        $self->plugin('Mojolicious::Plugin::UrlWith');
+
+        $self->plugin('Mojolicious::Plugin::UrlWith' => {
+            parse_fragment => 1,
+            current_page_class => 'current-page',
+        });
+
         # ...
     }
 
@@ -28,7 +33,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::Util qw/ xml_escape /;
 use Mojolicious::Plugin::TagHelpers;
 
-our $VERSION = eval '0.04';
+our $VERSION = eval '0.05';
 
 =head1 ATTRIBUTES
 
@@ -40,6 +45,22 @@ and use it use it for L<Mojo::URL/fragment>.
 =cut
 
 __PACKAGE__->attr(parse_fragment => sub { 0 });
+
+=head2 current_page_class
+
+    $self->current_page_class($classname);
+    $classname = $self->current_page_class;
+
+Will add the C<$classname> to the link in L</link_with> if the path part
+of the link match the currently requested path. You need to set this
+attribute when registering the plugin, since the default value is empty
+string, cancelling the behavior.
+
+This attribute is EXPERIMENTAL and may be removed/changed without warning.
+
+=cut
+
+__PACKAGE__->attr(current_page_class => sub { '' });
 
 =head1 HELPERS
 
@@ -126,7 +147,7 @@ reference.
 sub link_with {
     my $self = shift;
     my $controller = shift;
-    my(@url_args, @tag_args);
+    my($url, @url_args, @tag_args);
 
     # Pretty much copy/paste from Plugin::TagHelpers
     unless(defined $_[-1] and ref $_[-1] eq 'CODE') {
@@ -143,10 +164,15 @@ sub link_with {
         }
     }
 
-    return Mojolicious::Plugin::TagHelpers->_tag(
-        a => href => $self->url_with($controller, @url_args),
-        @tag_args,
-    );
+    $url = $self->url_with($controller, @url_args);
+
+    if(my $class = $self->current_page_class) {
+        if($url->path eq $controller->req->url->path) {
+            unshift @tag_args, class => $class;
+        }
+    }
+
+    return Mojolicious::Plugin::TagHelpers->_tag(a => href => $url, @tag_args);
 }
 
 =head1 METHODS
@@ -163,6 +189,7 @@ sub register {
     $config->{'url_with_alias'} ||= 'url_with';
     $config->{'link_with_alias'} ||= 'link_with';
     $self->parse_fragment($config->{'parse_fragment'} || 0);
+    $self->current_page_class($config->{'current_page_class'} || '');
 
     $app->helper($config->{'url_with_alias'} => sub { $self->url_with(@_) });
     $app->helper($config->{'link_with_alias'} => sub { $self->link_with(@_) });

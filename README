@@ -2,7 +2,7 @@ NAME
     Mojolicious::Plugin::UrlWith - Preserve parts of the url
 
 VERSION
-    0.04
+    0.05
 
 DESCRIPTION
     This helper provides the same method as "url_for" in
@@ -13,7 +13,12 @@ SYNOPSIS
         package MyApp;
         sub startup {
             my $self = shift;
-            $self->plugin('Mojolicious::Plugin::UrlWith');
+
+            $self->plugin('Mojolicious::Plugin::UrlWith' => {
+                parse_fragment => 1,
+                current_page_class => 'current-page',
+            });
+
             # ...
         }
 
@@ -21,6 +26,18 @@ ATTRIBUTES
   parse_fragment
     Will remove the '#fragment' part from the first arugment to "url_with",
     and use it use it for "fragment" in Mojo::URL.
+
+  current_page_class
+        $self->current_page_class($classname);
+        $classname = $self->current_page_class;
+
+    Will add the $classname to the link in "link_with" if the path part of
+    the link match the currently requested path. You need to set this
+    attribute when registering the plugin, since the default value is empty
+    string, cancelling the behavior.
+
+    This attribute is EXPERIMENTAL and may be removed/changed without
+    warning.
 
 HELPERS
   url_with
