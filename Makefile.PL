@@ -3,7 +3,7 @@ use inc::Module::Install;
 name q(Mojolicious-Plugin-UrlWith);
 all_from q(lib/Mojolicious/Plugin/UrlWith.pm);
 
-requires q(Mojolicious) => 1.00;
+requires q(Mojolicious) => 3.30;
 
 test_requires q(Test::More) => 0.90;
 

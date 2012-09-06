@@ -1,5 +1,8 @@
 Revision history for Mojolicious-Plugin-UrlWith
 
+0.0502
+       * Bumped required Mojolicious version
+
 0.0501   Sun Aug  5 19:25:28 2012
        * _tag is not a method anymore
 
